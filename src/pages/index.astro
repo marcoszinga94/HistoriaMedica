@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PatientList from "../components/PatientList.astro";
+import PatientForm from "../components/PatientForm.astro";
+import { getPatients } from "../lib/server";
+
+const patients = await getPatients();
+---
+
+<Layout title="Sistema de Historia Clínica">
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <div class="flex flex-col max-w-4xl mx-auto gap-8">
+      <PatientForm />
+      <PatientList patients={patients} />
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,110 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPatient, getPatients } from "../../lib/server";
+import EditableField from "../../components/EditableField.astro";
+import AddConsultation from "../../components/AddConsultation.astro";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const patients = await getPatients();
+  return patients.map(({ _id }) => ({
+    params: { id: _id.toString() },
+  }));
+}
+
+const { id } = Astro.params;
+const patient = await getPatient(id);
+
+if (!patient) {
+  throw new Error("Paciente no encontrado");
+}
+---
+
+<Layout title={`Historial Médico de ${patient.fullName}`}>
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex flex-col max-w-4xl mx-auto gap-6">
+      <h1 class="text-3xl font-semibold">{patient.fullName}</h1>
+
+      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Información del Paciente
+          </h3>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
+          <dl>
+            <EditableField
+              label="Nombre Completo"
+              field="fullName"
+              value={patient.fullName}
+              patientId={id}
+            />
+            <EditableField
+              label="Edad"
+              field="age"
+              value={patient.age}
+              type="number"
+              patientId={id}
+            />
+            <EditableField
+              label="Peso"
+              field="weight"
+              value={patient.weight}
+              type="number"
+              step="0.1"
+              patientId={id}
+            />
+            <EditableField
+              label="Obra Social"
+              field="insuranceProvider"
+              value={patient.insuranceProvider}
+              patientId={id}
+            />
+            <EditableField
+              label="Número de Obra Social"
+              field="insuranceNumber"
+              value={patient.insuranceNumber}
+              patientId={id}
+            />
+          </dl>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Consultas
+          </h3>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
+          <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+            {
+              patient.consultations.length > 0 ? (
+                patient.consultations.map((consultation) => (
+                  <li class="py-4 flex justify-between text-sm">
+                    <div>
+                      <strong>
+                        {new Date(consultation.date).toLocaleDateString()}
+                      </strong>
+                      : {consultation.diagnosis}
+                      {consultation.notes && (
+                        <p class="text-gray-600 dark:text-gray-300">
+                          {consultation.notes}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li>No hay consultas disponibles.</li>
+              )
+            }
+          </ul>
+        </div>
+      </div>
+
+      <AddConsultation patientId={id} />
+    </div>
+  </main>
+</Layout>

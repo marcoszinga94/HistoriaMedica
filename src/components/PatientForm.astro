@@ -1,0 +1,179 @@
+<search>
+  <form
+    id="patientForm"
+    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 space-y-6"
+  >
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <label
+          for="fullName"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Nombre completo</label
+        >
+        <input
+          type="text"
+          name="fullName"
+          id="fullName"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="age"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Edad</label
+        >
+        <input
+          type="number"
+          name="age"
+          id="age"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="weight"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Peso (kg)</label
+        >
+        <input
+          type="number"
+          name="weight"
+          id="weight"
+          step="0.1"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="insuranceProvider"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Obra Social</label
+        >
+        <input
+          type="text"
+          name="insuranceProvider"
+          id="insuranceProvider"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="insuranceNumber"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Número de Obra Social</label
+        >
+        <input
+          type="text"
+          name="insuranceNumber"
+          id="insuranceNumber"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="consultationDate"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Fecha de consulta</label
+        >
+        <input
+          type="date"
+          name="consultationDate"
+          id="consultationDate"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+      <div>
+        <label
+          for="diagnosis"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Diagnóstico</label
+        >
+        <textarea
+          name="diagnosis"
+          id="diagnosis"
+          rows="3"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        ></textarea>
+      </div>
+      <div>
+        <label
+          for="notes"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >Notas</label
+        >
+        <textarea
+          name="notes"
+          id="notes"
+          rows="3"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        ></textarea>
+      </div>
+    </div>
+    <div>
+      <button
+        type="submit"
+        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+      >
+        Agregar Paciente
+      </button>
+    </div>
+  </form>
+</search>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("patientForm") as HTMLFormElement;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const formEntries = Object.fromEntries(formData.entries());
+
+      const patientData = {
+        fullName: formEntries.fullName as string,
+        age: parseInt(formEntries.age as string),
+        weight: parseFloat(formEntries.weight as string),
+        insuranceProvider: formEntries.insuranceProvider as string,
+        insuranceNumber: formEntries.insuranceNumber as string,
+        consultations: [
+          {
+            date: new Date(formEntries.consultationDate as string),
+            diagnosis: formEntries.diagnosis as string,
+            notes: formEntries.notes as string,
+          },
+        ],
+        createdAt: new Date(),
+      };
+
+      try {
+        const response = await fetch("http://localhost:3000/api/patients", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patientData),
+        });
+
+        if (!response.ok) throw new Error("Error en la respuesta del servidor");
+        const result = await response.json();
+
+        if (result.success) {
+          console.log("Paciente agregado con éxito");
+          form.reset();
+        } else {
+          console.log("Error al agregar paciente");
+        }
+        window.location.reload();
+      } catch (error) {
+        console.log(`Error al agregar paciente: ${error}`);
+      }
+    });
+  });
+</script>

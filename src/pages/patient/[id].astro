@@ -98,10 +98,13 @@ if (!patient) {
         </h3>
       </div>
       <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
-        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+        <ul
+          id="consultationList"
+          class="divide-y divide-gray-200 dark:divide-gray-700"
+        >
           {
-            patient.consultations.length > 0 ? (
-              patient.consultations.map((consultation, index) => (
+            patient.consultations != null ? (
+              patient.consultations.map((consultation) => (
                 <li class="py-4 flex justify-between text-sm">
                   <div>
                     <strong>
@@ -170,9 +173,9 @@ if (!patient) {
   </div>
 </Layout>
 
-<!-- Agregar el script para manejar los eventos -->
 <script>
   const patientId = document.getElementById("saveButton").dataset.patientId;
+  const url = `http://localhost:3000/api/patients/${patientId}`;
 
   document.getElementById("saveButton").addEventListener("click", async () => {
     const fullName = (document.getElementById("fullName") as HTMLInputElement)
@@ -188,27 +191,24 @@ if (!patient) {
     ).value;
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/patients/${patientId}.consultations.consultationId`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fullName,
-            age,
-            weight,
-            insuranceProvider,
-            insuranceNumber,
-          }),
-        }
-      );
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          age,
+          weight,
+          insuranceProvider,
+          insuranceNumber,
+        }),
+      });
 
       if (response.ok) {
         alert("Cambios guardados con éxito");
       } else {
-        const errorText = await response.text(); // Captura el mensaje de error
+        const errorText = await response.text();
         alert(`Error al guardar cambios: ${errorText}`);
       }
     } catch (error) {
@@ -232,16 +232,13 @@ if (!patient) {
       ).value;
 
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/patients/${patientId}/add-consultation`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ date, diagnosis, notes }),
-          }
-        );
+        const response = await fetch(`${url}/add-consultation`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ date, diagnosis, notes }),
+        });
 
         if (response.ok) {
           window.location.reload();

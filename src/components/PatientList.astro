@@ -2,49 +2,71 @@
 const { patients } = Astro.props;
 ---
 
-<section class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+<section
+  class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 space-y-4 overflow-hidden"
+>
   <h2 class="text-center text-3xl font-semibold">Pacientes Registrados</h2>
-  <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+
+  <search>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Buscar paciente por nombre..."
+      class="w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2"
+    />
+  </search>
+
+  <ul
+    id="patientList"
+    class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700 p-4"
+    data-patients={JSON.stringify(patients)}
+  >
     {
-      patients?.length > 0 ? (
-        patients.map((patient) => (
-          <li>
-            <a
-              href={`/patient/${patient._id}`}
-              class="block hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
-            >
-              <div class="px-4 py-4 sm:px-6">
-                <div class="flex items-center justify-between">
-                  <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
-                    {patient.fullName}
-                  </p>
-                  <div class="ml-2 flex-shrink-0 flex">
-                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100">
-                      Activo
+      patients.length > 0 ? (
+        patients
+          .map((patient) => (
+            <li>
+              <a
+                href="/${patient._id}"
+                class="block hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
+              >
+                <div class="px-4 py-4 sm:px-6">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-medium text-black dark:text-white truncate">
+                      ${patient.fullName} -{" "}
+                      <span class="text-gray-500 dark:text-gray-300">
+                        ${patient.age} años
+                      </span>
                     </p>
                   </div>
-                </div>
-                <div class="mt-2 sm:flex sm:justify-between">
-                  <div class="sm:flex">
-                    <p class="flex items-center text-sm text-gray-500 dark:text-gray-300">
-                      {patient.age} años
-                    </p>
+                  <div class="mt-2 sm:flex sm:justify-between">
+                    <div class="sm:flex">
+                      <p class="flex items-center text-sm text-gray-500 dark:text-gray-300">
+                        ${patient.insuranceProvider} -{" "}
+                        <span class="text-gray-500 dark:text-gray-300">
+                          ${patient.insuranceNumber}
+                        </span>
+                      </p>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300 sm:mt-0">
+                      <p>
+                        <strong>Última visita: </strong>$
+                        {patient.consultations &&
+                        patient.consultations.length > 0
+                          ? new Date(
+                              patient.consultations[
+                                patient.consultations.length - 1
+                              ].date
+                            ).toLocaleDateString()
+                          : "Sin consultas"}
+                      </p>
+                    </div>
                   </div>
-                  <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300 sm:mt-0">
-                    Última visita:{" "}
-                    {patient.consultations && patient.consultations.length > 0
-                      ? new Date(
-                          patient.consultations[
-                            patient.consultations.length - 1
-                          ].date
-                        ).toLocaleDateString()
-                      : "Sin consultas"}
-                  </div>
                 </div>
-              </div>
-            </a>
-          </li>
-        ))
+              </a>
+            </li>
+          ))
+          .join("")
       ) : (
         <li class="px-4 py-4 sm:px-6 text-sm text-gray-500 dark:text-gray-300">
           No hay pacientes disponibles.
@@ -53,3 +75,61 @@ const { patients } = Astro.props;
     }
   </ul>
 </section>
+
+<script>
+  const searchInput = document.getElementById(
+    "searchInput"
+  ) as HTMLInputElement;
+  const patientList = document.getElementById("patientList");
+  const patients = JSON.parse(patientList.getAttribute("data-patients"));
+
+  function renderPatients(filteredPatients) {
+    if (filteredPatients.length > 0) {
+      const filteredList = filteredPatients
+        .map(
+          (patient) =>
+            `<li>
+          <a href="/${patient._id}" class="block hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
+            <div class="px-4 py-4 sm:px-6">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-black dark:text-white truncate">
+                  ${patient.fullName} - <span class="text-gray-500 dark:text-gray-300">${patient.age} años</span>
+                </p>
+              </div>
+              <div class="mt-2 sm:flex sm:justify-between">
+                <div class="sm:flex">
+                  <p class="flex items-center text-sm text-gray-500 dark:text-gray-300">
+                    ${patient.insuranceProvider} - <span class="text-gray-500 dark:text-gray-300">${patient.insuranceNumber}</span>
+                  </p>
+                </div>
+                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300 sm:mt-0">
+                  <p>
+                    <strong>Última visita: </strong>
+                    ${patient.consultations && patient.consultations.length > 0 ? new Date(patient.consultations[patient.consultations.length - 1].date).toLocaleDateString() : "Sin consultas"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>`
+        )
+        .join("");
+
+      patientList.innerHTML = filteredList;
+    } else {
+      patientList.innerHTML =
+        '<li class="px-4 py-4 sm:px-6 text-sm text-gray-500 dark:text-gray-300">No hay pacientes disponibles.</li>';
+    }
+  }
+  renderPatients(patients);
+
+  searchInput.addEventListener("input", function () {
+    const filter = searchInput.value.toLowerCase();
+
+    const filteredPatients = patients.filter((patient) =>
+      patient.fullName.toLowerCase().includes(filter)
+    );
+
+    renderPatients(filteredPatients);
+  });
+</script>

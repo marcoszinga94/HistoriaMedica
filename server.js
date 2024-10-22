@@ -8,7 +8,7 @@ import {
   addConsultation,
   updatePatient,
   deletePatient
-} from './lib/db.js';
+} from './src/lib/db.js';
 
 dotenv.config();
 
@@ -17,13 +17,13 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas de la API
-
 // Obtener todos los pacientes
 app.get('/api/patients', async (req, res) => {
   try {
     const patients = await getPatients();
     res.json(patients);
   } catch (error) {
+    console.error('Error al obtener los pacientes:', error);
     res.status(500).json({ error: 'Error al obtener los pacientes' });
   }
 });
@@ -37,6 +37,7 @@ app.get('/api/patients/:id', async (req, res) => {
     }
     res.json(patient);
   } catch (error) {
+    console.error('Error al obtener el paciente:', error);
     res.status(500).json({ error: 'Error al obtener el paciente' });
   }
 });
@@ -46,10 +47,10 @@ app.post('/api/patients', async (req, res) => {
   try {
     const patient = req.body;
     const insertedId = await addPatient(patient);
-    res.status(201).json({ success: true, insertedId }); // Asegúrate de enviar 'success: true'
+    res.status(201).json({ success: true, insertedId });
   } catch (error) {
-    console.error('Error al agregar paciente:', error); // Esto te ayudará a depurar
-    res.status(500).json({ success: false, error: 'Error al agregar el paciente' }); // Mensaje de error claro
+    console.error('Error al agregar paciente:', error);
+    res.status(500).json({ success: false, error: 'Error al agregar el paciente' });
   }
 });
 
@@ -59,7 +60,6 @@ app.post('/api/patients/:id/add-consultation', async (req, res) => {
     const { id } = req.params;
     const consultation = req.body;
 
-    // Verificar que se incluyan la fecha y el diagnóstico
     if (!consultation.date || !consultation.diagnosis) {
       return res.status(400).json({
         error: 'Fecha y diagnóstico son requeridos'
@@ -97,6 +97,7 @@ app.put('/api/patients/:id', async (req, res) => {
       res.status(404).json({ error: 'Paciente no encontrado' });
     }
   } catch (error) {
+    console.error('Error al actualizar el paciente:', error);
     res.status(500).json({ error: 'Error al actualizar el paciente' });
   }
 });
@@ -114,6 +115,7 @@ app.delete('/api/patients/:id', async (req, res) => {
       res.status(404).json({ error: 'Paciente no encontrado' });
     }
   } catch (error) {
+    console.error('Error al eliminar el paciente:', error);
     res.status(500).json({ error: 'Error al eliminar el paciente' });
   }
 });

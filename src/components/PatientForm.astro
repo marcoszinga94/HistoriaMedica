@@ -161,15 +161,15 @@
           body: JSON.stringify(patientData),
         });
 
-        const result = await response.json(); // Asegúrate de analizar la respuesta como JSON
+        const result = await response.json();
 
         if (!response.ok)
-          throw new Error(result.error || "Error en la respuesta del servidor"); // Usa el mensaje de error del servidor si está disponible
+          throw new Error(result.error || "Error en la respuesta del servidor");
 
         console.log("Paciente agregado con éxito");
         window.location.reload();
       } catch (error) {
-        console.log(`Error al agregar paciente: ${error.message}`); // Muestra el mensaje de error
+        console.log(`Error al agregar paciente: ${error.message}`);
       }
     });
   });

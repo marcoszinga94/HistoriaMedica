@@ -10,15 +10,19 @@ let db;
 // Función para conectar a la base de datos
 async function connectToDatabase() {
   if (!db) {
-    await client.connect();
-    db = client.db('clinica');
-    console.log("Conectado a la base de datos");
+    try {
+      await client.connect();
+      db = client.db('clinica');
+      console.log("Conectado a la base de datos");
+    } catch (error) {
+      console.error('Error al conectar con la base de datos:', error);
+      throw error;
+    }
   }
   return db;
 }
 
 // Operaciones CRUD
-
 // Obtener todos los pacientes (Read)
 export async function getPatients() {
   const db = await connectToDatabase();

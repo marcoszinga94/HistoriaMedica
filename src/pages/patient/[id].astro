@@ -15,163 +15,159 @@ if (!patient) {
 ---
 
 <Layout title={`Historial Médico de ${patient.fullName}`}>
-  <main class="container mx-auto px-4 py-8">
-    <div class="flex flex-col max-w-4xl mx-auto gap-6">
-      <h1 class="text-3xl font-semibold">{patient.fullName}</h1>
+  <div class="flex flex-col max-w-4xl mx-auto gap-6">
+    <h1 class="text-3xl font-semibold">{patient.fullName}</h1>
 
-      <!-- Información del paciente -->
-      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
-        <div class="px-4 py-5 sm:px-6">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Información del Paciente
-          </h3>
-        </div>
-        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
-          <dl>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700"
-                >Nombre Completo</label
-              >
-              <input
-                type="text"
-                id="fullName"
-                value={patient.fullName}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700">Edad</label
-              >
-              <input
-                type="number"
-                id="age"
-                value={patient.age}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700">Peso</label
-              >
-              <input
-                type="number"
-                id="weight"
-                value={patient.weight}
-                step="0.1"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700"
-                >Obra Social</label
-              >
-              <input
-                type="text"
-                id="insuranceProvider"
-                value={patient.insuranceProvider}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700"
-                >Número de Obra Social</label
-              >
-              <input
-                type="text"
-                id="insuranceNumber"
-                value={patient.insuranceNumber}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </div>
-          </dl>
-          <button
-            id="saveButton"
-            data-patient-id={id}
-            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Guardar Cambios
-          </button>
-        </div>
+    <!-- Información del paciente -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          Información del Paciente
+        </h3>
       </div>
-
-      <!-- Consultas -->
-      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
-        <div class="px-4 py-5 sm:px-6">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Consultas
-          </h3>
-        </div>
-        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
-          <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-            {
-              patient.consultations.length > 0 ? (
-                patient.consultations.map((consultation, index) => (
-                  <li class="py-4 flex justify-between text-sm">
-                    <div>
-                      <strong>
-                        {new Date(consultation.date).toLocaleDateString()}
-                      </strong>
-                      : {consultation.diagnosis}
-                      {consultation.notes && (
-                        <p class="text-gray-600 dark:text-gray-300">
-                          {consultation.notes}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li>No hay consultas disponibles.</li>
-              )
-            }
-          </ul>
-        </div>
-      </div>
-
-      <!-- Formulario para agregar una nueva consulta -->
-      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg mt-6">
-        <div class="px-4 py-5 sm:px-6">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Añadir Consulta
-          </h3>
-        </div>
-        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
-          <form id="addConsultationForm">
-            <label class="block mb-4">
-              Fecha de Consulta:
-              <input
-                type="date"
-                id="consultationDate"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </label>
-
-            <label class="block mb-4">
-              Diagnóstico:
-              <input
-                type="text"
-                id="consultationDiagnosis"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              />
-            </label>
-
-            <label class="block mb-4">
-              Notas:
-              <textarea
-                id="consultationNotes"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
-              ></textarea>
-            </label>
-
-            <button
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded"
-              >Añadir Consulta</button
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
+        <dl>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Nombre Completo</label
             >
-          </form>
-        </div>
+            <input
+              type="text"
+              id="fullName"
+              value={patient.fullName}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Edad</label>
+            <input
+              type="number"
+              id="age"
+              value={patient.age}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Peso</label>
+            <input
+              type="number"
+              id="weight"
+              value={patient.weight}
+              step="0.1"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Obra Social</label
+            >
+            <input
+              type="text"
+              id="insuranceProvider"
+              value={patient.insuranceProvider}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Número de Obra Social</label
+            >
+            <input
+              type="text"
+              id="insuranceNumber"
+              value={patient.insuranceNumber}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </div>
+        </dl>
+        <button
+          id="saveButton"
+          data-patient-id={id}
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Guardar Cambios
+        </button>
       </div>
     </div>
-  </main>
+
+    <!-- Consultas -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          Consultas
+        </h3>
+      </div>
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          {
+            patient.consultations.length > 0 ? (
+              patient.consultations.map((consultation, index) => (
+                <li class="py-4 flex justify-between text-sm">
+                  <div>
+                    <strong>
+                      {new Date(consultation.date).toLocaleDateString()}
+                    </strong>
+                    : {consultation.diagnosis}
+                    {consultation.notes && (
+                      <p class="text-gray-600 dark:text-gray-300">
+                        {consultation.notes}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))
+            ) : (
+              <li>No hay consultas disponibles.</li>
+            )
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- Formulario para agregar una nueva consulta -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg mt-6">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          Añadir Consulta
+        </h3>
+      </div>
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5">
+        <form id="addConsultationForm">
+          <label class="block mb-4">
+            Fecha de Consulta:
+            <input
+              type="date"
+              id="consultationDate"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </label>
+
+          <label class="block mb-4">
+            Diagnóstico:
+            <input
+              type="text"
+              id="consultationDiagnosis"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            />
+          </label>
+
+          <label class="block mb-4">
+            Notas:
+            <textarea
+              id="consultationNotes"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
+            ></textarea>
+          </label>
+
+          <button
+            type="submit"
+            class="px-4 py-2 bg-green-500 text-white rounded"
+            >Añadir Consulta</button
+          >
+        </form>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <!-- Agregar el script para manejar los eventos -->

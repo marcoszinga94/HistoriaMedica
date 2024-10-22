@@ -104,7 +104,7 @@ if (!patient) {
           <ul class="divide-y divide-gray-200 dark:divide-gray-700">
             {
               patient.consultations.length > 0 ? (
-                patient.consultations.map((consultation) => (
+                patient.consultations.map((consultation, index) => (
                   <li class="py-4 flex justify-between text-sm">
                     <div>
                       <strong>
@@ -193,7 +193,7 @@ if (!patient) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/patients/${patientId}`,
+        `http://localhost:3000/api/patients/${patientId}.consultations.consultationId`,
         {
           method: "PUT",
           headers: {
@@ -212,7 +212,8 @@ if (!patient) {
       if (response.ok) {
         alert("Cambios guardados con éxito");
       } else {
-        alert("Error al guardar cambios");
+        const errorText = await response.text(); // Captura el mensaje de error
+        alert(`Error al guardar cambios: ${errorText}`);
       }
     } catch (error) {
       console.error("Error al guardar cambios:", error);
@@ -224,7 +225,6 @@ if (!patient) {
     .getElementById("addConsultationForm")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
-      const patientId = "{id}";
       const date = (
         document.getElementById("consultationDate") as HTMLInputElement
       ).value;
@@ -248,9 +248,10 @@ if (!patient) {
         );
 
         if (response.ok) {
-          alert("Consulta añadida con éxito");
+          window.location.reload();
         } else {
-          alert("Error al añadir consulta");
+          const errorText = await response.text();
+          alert(`Error al añadir consulta: ${errorText}`);
         }
       } catch (error) {
         console.error("Error al añadir consulta:", error);

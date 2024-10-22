@@ -46,9 +46,10 @@ app.post('/api/patients', async (req, res) => {
   try {
     const patient = req.body;
     const insertedId = await addPatient(patient);
-    res.status(201).json({ insertedId });
+    res.status(201).json({ success: true, insertedId }); // Asegúrate de enviar 'success: true'
   } catch (error) {
-    res.status(500).json({ error: 'Error al agregar el paciente' });
+    console.error('Error al agregar paciente:', error); // Esto te ayudará a depurar
+    res.status(500).json({ success: false, error: 'Error al agregar el paciente' }); // Mensaje de error claro
   }
 });
 

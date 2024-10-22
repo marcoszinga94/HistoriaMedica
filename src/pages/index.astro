@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import PatientList from "../components/PatientList.astro";
 import PatientForm from "../components/PatientForm.astro";
-import { getPatients } from "../lib/server";
+import { getPatients } from "../lib/db";
 
 const patients = await getPatients();
 ---

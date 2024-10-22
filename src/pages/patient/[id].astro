@@ -3,6 +3,10 @@ import Layout from "../../layouts/Layout.astro";
 
 const { id } = Astro.params;
 const response = await fetch(`http://localhost:3000/api/patients/${id}`);
+if (!response.ok) {
+  throw new Error(`Error ${response.status}: ${await response.text()}`);
+}
+
 const patient = await response.json();
 
 if (!patient) {
@@ -32,7 +36,7 @@ if (!patient) {
                 type="text"
                 id="fullName"
                 value={patient.fullName}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </div>
             <div class="mb-4">
@@ -42,7 +46,7 @@ if (!patient) {
                 type="number"
                 id="age"
                 value={patient.age}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </div>
             <div class="mb-4">
@@ -53,7 +57,7 @@ if (!patient) {
                 id="weight"
                 value={patient.weight}
                 step="0.1"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </div>
             <div class="mb-4">
@@ -64,7 +68,7 @@ if (!patient) {
                 type="text"
                 id="insuranceProvider"
                 value={patient.insuranceProvider}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </div>
             <div class="mb-4">
@@ -75,15 +79,17 @@ if (!patient) {
                 type="text"
                 id="insuranceNumber"
                 value={patient.insuranceNumber}
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </div>
           </dl>
           <button
             id="saveButton"
+            data-patient-id={id}
             class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            >Guardar Cambios</button
           >
+            Guardar Cambios
+          </button>
         </div>
       </div>
 
@@ -135,7 +141,7 @@ if (!patient) {
               <input
                 type="date"
                 id="consultationDate"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </label>
 
@@ -144,7 +150,7 @@ if (!patient) {
               <input
                 type="text"
                 id="consultationDiagnosis"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               />
             </label>
 
@@ -152,7 +158,7 @@ if (!patient) {
               Notas:
               <textarea
                 id="consultationNotes"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-400 text-white px-2"
               ></textarea>
             </label>
 
@@ -166,82 +172,89 @@ if (!patient) {
       </div>
     </div>
   </main>
+</Layout>
 
-  <!-- Agregar el script para manejar los eventos -->
-  <script>
-    document
-      .getElementById("saveButton")
-      .addEventListener("click", async () => {
-        const patientId = "{id}";
-        const fullName = document.getElementById("fullName").value;
-        const age = document.getElementById("age").value;
-        const weight = document.getElementById("weight").value;
-        const insuranceProvider =
-          document.getElementById("insuranceProvider").value;
-        const insuranceNumber =
-          document.getElementById("insuranceNumber").value;
+<!-- Agregar el script para manejar los eventos -->
+<script>
+  const patientId = document.getElementById("saveButton").dataset.patientId;
 
-        try {
-          const response = await fetch(
-            `http://localhost:3000/api/patients/${patientId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                fullName,
-                age,
-                weight,
-                insuranceProvider,
-                insuranceNumber,
-              }),
-            }
-          );
+  document.getElementById("saveButton").addEventListener("click", async () => {
+    const fullName = (document.getElementById("fullName") as HTMLInputElement)
+      .value;
+    const age = (document.getElementById("age") as HTMLInputElement).value;
+    const weight = (document.getElementById("weight") as HTMLInputElement)
+      .value;
+    const insuranceProvider = (
+      document.getElementById("insuranceProvider") as HTMLInputElement
+    ).value;
+    const insuranceNumber = (
+      document.getElementById("insuranceNumber") as HTMLInputElement
+    ).value;
 
-          if (response.ok) {
-            alert("Cambios guardados con éxito");
-          } else {
-            alert("Error al guardar cambios");
-          }
-        } catch (error) {
-          console.error("Error al guardar cambios:", error);
-          alert("Error al guardar cambios");
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/patients/${patientId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            age,
+            weight,
+            insuranceProvider,
+            insuranceNumber,
+          }),
         }
-      });
+      );
 
-    document
-      .getElementById("addConsultationForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const patientId = "{id}";
-        const date = document.getElementById("consultationDate").value;
-        const diagnosis = document.getElementById(
-          "consultationDiagnosis"
-        ).value;
-        const notes = document.getElementById("consultationNotes").value;
+      if (response.ok) {
+        alert("Cambios guardados con éxito");
+      } else {
+        alert("Error al guardar cambios");
+      }
+    } catch (error) {
+      console.error("Error al guardar cambios:", error);
+      alert("Error al guardar cambios");
+    }
+  });
 
-        try {
-          const response = await fetch(
-            `http://localhost:3000/api/patients/${patientId}/add-consultation`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ date, diagnosis, notes }),
-            }
-          );
+  document
+    .getElementById("addConsultationForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const patientId = "{id}";
+      const date = (
+        document.getElementById("consultationDate") as HTMLInputElement
+      ).value;
+      const diagnosis = (
+        document.getElementById("consultationDiagnosis") as HTMLInputElement
+      ).value;
+      const notes = (
+        document.getElementById("consultationNotes") as HTMLTextAreaElement
+      ).value;
 
-          if (response.ok) {
-            alert("Consulta añadida con éxito");
-          } else {
-            alert("Error al añadir consulta");
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/patients/${patientId}/add-consultation`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ date, diagnosis, notes }),
           }
-        } catch (error) {
-          console.error("Error al añadir consulta:", error);
+        );
+
+        if (response.ok) {
+          alert("Consulta añadida con éxito");
+        } else {
           alert("Error al añadir consulta");
         }
-      });
-  </script>
-</Layout>
+      } catch (error) {
+        console.error("Error al añadir consulta:", error);
+        alert("Error al añadir consulta");
+      }
+    });
+</script>
